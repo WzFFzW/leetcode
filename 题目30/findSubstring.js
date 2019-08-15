@@ -4,20 +4,26 @@
  * @return {number[]}
  */
 var findSubstring = function(s, words) {
+  if (!words.length || !s.length) {
+    return [];
+  }
+  const substr_length = words[0].length * words.length;
+  if (substr_length > s.length) {
+    return [];
+  }
   const res = [];
   const word_map = new Map();
   words.map((item) => {
     const value = word_map.get(item);
     value ? word_map.set(item, value + 1) : word_map.set(item, 1);
   })
-  const substr_length = words[0].length * words.length;
   const word_length = words[0].length;
   if (substr_length > s.length) {
     return res;
   }
   let i = 0;
-  while (i < s.length - substr_length) {
-    const str = s.slice(i, word_length);
+  while (i <= s.length - substr_length) {
+    const str = s.slice(i, i + word_length);
     const value = word_map.get(str);
     if (!value) {
       i++;
@@ -25,20 +31,25 @@ var findSubstring = function(s, words) {
     }
     const tmp_map = new Map();
     tmp_map.set(str, 1);
-    let j = i + word_length;
-    while (j < substr_length) {
-      const tmp_str = s.slice(j, j + word_length);
+    let j = word_length;
+    while (j <= substr_length) {
+      const tmp_str = s.slice(i + j, i + j + word_length);
       const value = word_map.get(tmp_str);
       if (!value) {
         break;
       }
-      if (tmp_map.get(tmp_str) > word_map.get(tmp_str)) {
+      const tmp_value = tmp_map.get(tmp_str);
+      if (tmp_value && tmp_value + 1 > word_map.get(tmp_str)) {
         break;
       }
-      tmp_map.set(tmp_str, tmp_map.get(tmp_str) + 1);
+      if (!tmp_value) {
+        tmp_map.set(tmp_str, 1)
+      } else {
+        tmp_map.set(tmp_str, tmp_value + 1);
+      }
       j += word_length;
     }
-    if (j - i === substr_length) {
+    if (j === substr_length) {
       res.push(i);
     }
     i++;
