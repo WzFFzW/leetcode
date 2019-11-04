@@ -5,17 +5,18 @@
  */
 var combine = function(n, k) {
   const res = [];
-  function _combine(arr) {
+  function _combine(arr, index) {
     if (arr.length === k) {
       res.push(arr);
       return;
     }
-    for (let i = 0; i <= n; i++) {
-      arr.push(i);
-      _combine([...arr]);
+    for (let i = index; i <= n; i++) {
+      if (arr.includes(i)) {
+        continue;
+      }
+      _combine([...arr, i], i);
     }
   }
-  _combine([]);
-  console.log(res);
+  _combine([], 1);
   return res;
 };
